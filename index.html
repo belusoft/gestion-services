@@ -247,6 +247,129 @@
       background: #ede9fe; color: #6366f1; margin-left: 6px;
     }
     .badge.green { background: #d1fae5; color: #065f46; }
+
+    /* ── PROGRAMME REDESIGN ── */
+    .prog-header {
+      display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap;
+      align-items: center;
+    }
+    .prog-select {
+      flex: 1; min-width: 110px; padding: 10px 12px;
+      border: 2px solid #e5e7eb; border-radius: 12px;
+      font-size: 14px; font-family: inherit; background: white;
+      color: #1f2937; font-weight: 500;
+    }
+    .prog-select:focus { outline: none; border-color: #6366f1; }
+
+    /* Barre recherche nom */
+    .prog-search-wrap { position: relative; margin-bottom: 14px; }
+    .prog-search {
+      width: 100%; padding: 12px 14px 12px 40px;
+      border: 2px solid #e5e7eb; border-radius: 14px;
+      font-size: 15px; font-family: inherit; transition: border-color .2s;
+    }
+    .prog-search:focus { outline: none; border-color: #6366f1; }
+    .prog-search-icon {
+      position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
+      font-size: 16px; pointer-events: none;
+    }
+    .prog-search-clear {
+      position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+      background: #e5e7eb; border: none; border-radius: 50%;
+      width: 22px; height: 22px; cursor: pointer; font-size: 12px;
+      display: none; align-items: center; justify-content: center;
+      font-family: inherit; color: #6b7280; line-height: 1;
+    }
+    .prog-search-clear.visible { display: flex; }
+
+    /* Info filtre actif */
+    .prog-filtre-info {
+      background: #ede9fe; color: #4f46e5; border-radius: 10px;
+      padding: 8px 12px; font-size: 13px; margin-bottom: 12px;
+      display: none; align-items: center; gap: 6px;
+    }
+    .prog-filtre-info.visible { display: flex; }
+
+    /* Carte date */
+    .prog-date-card {
+      background: white; border-radius: 18px;
+      margin-bottom: 12px; overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,.07);
+      border: 1px solid #f3f4f6;
+    }
+    .prog-date-header {
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      color: white; padding: 12px 16px;
+      font-weight: 700; font-size: 15px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .prog-date-header.assemblee {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+    }
+    .prog-date-body { padding: 10px 12px; }
+
+    /* Ligne service */
+    .prog-service-row {
+      display: flex; align-items: flex-start;
+      padding: 7px 0; border-bottom: 1px solid #f3f4f6;
+      gap: 8px;
+    }
+    .prog-service-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .prog-service-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+    .prog-service-label {
+      font-size: 12px; font-weight: 600; color: #6b7280;
+      min-width: 120px; flex-shrink: 0; padding-top: 2px;
+      text-transform: uppercase; letter-spacing: .3px;
+    }
+    .prog-people { display: flex; flex-wrap: wrap; gap: 4px; flex: 1; }
+    .prog-person {
+      background: #f3f4f6; color: #374151;
+      border-radius: 8px; padding: 3px 8px;
+      font-size: 13px; font-weight: 500;
+    }
+    .prog-person.highlighted {
+      background: #fef3c7; color: #92400e;
+      font-weight: 700; border: 1px solid #fcd34d;
+    }
+
+    /* Semaine assemblée */
+    .assemblee-row {
+      padding: 10px 12px; font-size: 14px;
+      color: #92400e; font-weight: 600;
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    /* Vue par service */
+    .prog-by-service-card {
+      background: white; border-radius: 18px;
+      margin-bottom: 12px; overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,.07);
+      border: 1px solid #f3f4f6;
+    }
+    .prog-by-service-header {
+      padding: 12px 16px; font-weight: 700; font-size: 14px;
+      border-bottom: 1px solid #f3f4f6;
+      display: flex; align-items: center; gap: 8px;
+      background: #fafafa;
+    }
+    .prog-by-service-date {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 9px 16px; border-bottom: 1px solid #f9fafb;
+      font-size: 13px; flex-wrap: wrap; gap: 6px;
+    }
+    .prog-by-service-date:last-child { border-bottom: none; }
+    .prog-date-chip {
+      background: #ede9fe; color: #4f46e5;
+      border-radius: 8px; padding: 3px 10px;
+      font-size: 12px; font-weight: 600; white-space: nowrap;
+    }
+
+    /* Vide / erreur */
+    .prog-empty {
+      text-align: center; padding: 40px 20px;
+      color: #9ca3af; font-size: 14px;
+    }
+    .prog-empty .big-icon { font-size: 48px; margin-bottom: 12px; }
   </style>
 </head>
 <body>
@@ -356,23 +479,42 @@
     <div class="brand-header" style="margin-bottom:10px;">
       <div style="font-size:36px;">📋</div>
       <h1 style="font-size:20px;">Programme du mois</h1>
+      <p style="font-size:12px;opacity:.85;">Sono &amp; Accueil — 2026</p>
     </div>
     <div class="card">
-      <div class="prog-controls">
-        <select class="prog-select" id="prog-mois-select">
-          <!-- rempli dynamiquement -->
-        </select>
-        <select class="prog-select" id="prog-filtre-select" style="max-width:140px;">
+
+      <!-- Sélecteurs mois + vue -->
+      <div class="prog-header">
+        <select class="prog-select" id="prog-mois-select"><!-- rempli dynamiquement --></select>
+        <select class="prog-select" id="prog-vue-select" style="max-width:130px;">
           <option value="date">Par date</option>
           <option value="service">Par service</option>
         </select>
       </div>
+
+      <!-- Recherche par nom -->
+      <div class="prog-search-wrap">
+        <span class="prog-search-icon">🔍</span>
+        <input type="text" class="prog-search" id="prog-search-nom"
+               placeholder="Chercher mon nom dans le programme…"
+               autocomplete="off" autocorrect="off" spellcheck="false">
+        <button class="prog-search-clear" id="prog-search-clear" aria-label="Effacer">✕</button>
+      </div>
+
+      <!-- Info filtre actif -->
+      <div class="prog-filtre-info" id="prog-filtre-info">
+        <span>👤</span>
+        <span id="prog-filtre-info-text"></span>
+      </div>
+
+      <!-- Contenu programme -->
       <div id="programme-container">
         <div class="prog-empty">
           <div class="big-icon">📅</div>
-          <p>Chargement du programme…</p>
+          <p>Sélectionne un mois pour voir le programme.</p>
         </div>
       </div>
+
       <button class="btn btn-secondary" id="btn-back-from-prog" style="margin-top:16px;">← Retour à l'accueil</button>
     </div>
   </div>
@@ -385,7 +527,7 @@
 /* ═══════════════════════════════════════════════════
    CONFIGURATION
 ═══════════════════════════════════════════════════ */
-const GAS_URL = 'https://script.google.com/macros/s/AKfycby-QGAs4SFO132VVDtS5Okj0XZmlhBxjEzyLVki6aSOegziAmqbMvOxmhekwRCQ55xy/exec';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbwXVo9v7e1DdhIclRemvZNEQemBfEdOl84YIfsvjXPsUzvifwf4mmKcaWNvhj9kXSy8/exec';
 
 /* Mois de Juin à Décembre 2026 (les réunions mardi+samedi) */
 const MOIS = [
@@ -857,9 +999,15 @@ document.getElementById('btn-reset-after-success').addEventListener('click', () 
 
 /* ═══════════════════════════════════════════════════
    ÉCRAN 6 — PROGRAMME DU MOIS
+   Lit les données depuis l'onglet mensuel du fichier
+   "PROGRAMME SONORISATION_ACCUEIL" via Google Apps Script.
+   Format reçu : { date, estAssemblee, services:[{service,icon,personnes:[]}] }
 ═══════════════════════════════════════════════════ */
 
-/** Construit la liste de mois dans le select du programme */
+// Cache des données programme (évite les re-chargements inutiles)
+let progCache = { mois: null, data: null };
+
+/** Construit le sélecteur de mois et sélectionne le mois courant */
 function buildProgrammeMonthSelect() {
   const sel = document.getElementById('prog-mois-select');
   sel.innerHTML = '';
@@ -868,113 +1016,257 @@ function buildProgrammeMonthSelect() {
     const opt = document.createElement('option');
     opt.value = m.num;
     opt.textContent = `${m.emoji} ${m.nom} 2026`;
+    // Sélectionner le mois courant (ou le suivant si fin de mois)
     if (m.num === now.getMonth() + 1) opt.selected = true;
     sel.appendChild(opt);
   });
 }
 
-document.getElementById('prog-mois-select').addEventListener('change', loadProgramme);
-document.getElementById('prog-filtre-select').addEventListener('change', loadProgramme);
+// ── Listeners ─────────────────────────────────────
+document.getElementById('prog-mois-select').addEventListener('change', () => {
+  progCache = { mois: null, data: null }; // invalider le cache
+  loadProgramme();
+});
+document.getElementById('prog-vue-select').addEventListener('change', () => {
+  if (progCache.data) afficherProgramme(progCache.data);
+});
 document.getElementById('btn-back-from-prog').addEventListener('click', () => show('screen-welcome'));
 
+// Recherche par nom
+document.getElementById('prog-search-nom').addEventListener('input', function() {
+  const val = this.value.trim();
+  document.getElementById('prog-search-clear').classList.toggle('visible', val.length > 0);
+  if (progCache.data) afficherProgramme(progCache.data);
+});
+document.getElementById('prog-search-clear').addEventListener('click', () => {
+  document.getElementById('prog-search-nom').value = '';
+  document.getElementById('prog-search-clear').classList.remove('visible');
+  if (progCache.data) afficherProgramme(progCache.data);
+});
+
+/**
+ * Charge le programme depuis Google Apps Script
+ * (qui lit l'onglet "Mois Année" de PROGRAMME SONORISATION_ACCUEIL)
+ */
 async function loadProgramme() {
   const moisNum = parseInt(document.getElementById('prog-mois-select').value, 10);
-  const filtre = document.getElementById('prog-filtre-select').value;
   const container = document.getElementById('programme-container');
 
-  container.innerHTML = '<div class="prog-empty"><div class="big-icon">⏳</div><p>Chargement…</p></div>';
+  // Retourner le cache si même mois
+  if (progCache.mois === moisNum && progCache.data) {
+    afficherProgramme(progCache.data);
+    return;
+  }
+
+  container.innerHTML = '<div class="prog-empty"><div class="big-icon" style="font-size:32px;animation:spin .8s linear infinite;display:inline-block;">⏳</div><p>Chargement du programme…</p></div>';
 
   try {
     const url = `${GAS_URL}?action=getProgramme&mois=${moisNum}&annee=2026`;
-    const res = await fetch(url);
+    const res  = await fetch(url);
     if (!res.ok) throw new Error('Erreur réseau (' + res.status + ')');
-    const data = await res.json();
-    if (!data.ok) throw new Error(data.error || 'Erreur serveur');
+    const json = await res.json();
+    if (!json.ok) throw new Error(json.error || 'Erreur serveur');
 
-    displayProgramme(data.programme || [], filtre);
+    // Mettre en cache
+    progCache = { mois: moisNum, data: json.programme || [] };
+    afficherProgramme(progCache.data);
+
   } catch (err) {
-    console.error('Programme error:', err);
+    console.error('Programme:', err);
     container.innerHTML = `
       <div class="error-state">
         ❌ Impossible de charger le programme.<br>
-        <small>${escapeHtml(err.message)}</small>
-        <br><button onclick="loadProgramme()">🔄 Réessayer</button>
+        <small>${escapeHtml(err.message)}</small><br>
+        <button onclick="loadProgramme()">🔄 Réessayer</button>
       </div>`;
   }
 }
 
 /**
- * Affiche le programme
- * @param {Array} entries - [{date, service, freres:[]}]
- * @param {string} filtre - 'date' | 'service'
+ * Normalise une chaîne pour la comparaison (supprime accents, met en minuscules)
  */
-function displayProgramme(entries, filtre) {
-  const container = document.getElementById('programme-container');
+function normaliser(str) {
+  return String(str).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+}
+
+/**
+ * Affiche le programme selon la vue et le filtre nom actifs.
+ * @param {Array} entries - [{date, estAssemblee, services:[{service,icon,personnes:[]}]}]
+ */
+function afficherProgramme(entries) {
+  const container  = document.getElementById('programme-container');
+  const vue        = document.getElementById('prog-vue-select').value;
+  const recherche  = normaliser(document.getElementById('prog-search-nom').value.trim());
+  const infoEl     = document.getElementById('prog-filtre-info');
+  const infoTxtEl  = document.getElementById('prog-filtre-info-text');
+
+  // Afficher/masquer la bannière de filtre
+  if (recherche) {
+    infoEl.classList.add('visible');
+    infoTxtEl.textContent = `Filtre actif : "${document.getElementById('prog-search-nom').value.trim()}"`;
+  } else {
+    infoEl.classList.remove('visible');
+  }
 
   if (!entries || entries.length === 0) {
     container.innerHTML = `
       <div class="prog-empty">
         <div class="big-icon">📭</div>
-        <p>Aucun programme disponible pour ce mois.</p>
+        <p>Aucun programme disponible pour ce mois.<br>
+        <small style="font-size:12px;">Vérifiez que l'onglet existe dans le fichier Sheets.</small></p>
       </div>`;
     return;
   }
 
-  let html = '';
+  // Filtrer par nom si recherche active
+  const filtered = recherche
+    ? entries.filter(e =>
+        e.estAssemblee ||
+        e.services.some(s => s.personnes.some(p => normaliser(p).includes(recherche)))
+      )
+    : entries;
 
-  if (filtre === 'date') {
-    // Grouper par date
-    const byDate = {};
-    entries.forEach(e => {
-      if (!byDate[e.date]) byDate[e.date] = [];
-      byDate[e.date].push(e);
-    });
-
-    Object.entries(byDate)
-      .sort(([a], [b]) => a.localeCompare(b))
-      .forEach(([date, services]) => {
-        const dateObj = new Date(date + 'T12:00:00');
-        const label = dateObj.toLocaleDateString('fr-FR', {
-          weekday: 'long', day: 'numeric', month: 'long',
-        });
-        html += `<div class="prog-day">
-          <div class="prog-day-label">📅 ${label}</div>`;
-        services.forEach(s => {
-          const freres = Array.isArray(s.freres) ? s.freres : [];
-          html += `<div class="prog-service">
-            <div class="prog-service-name">🔹 ${escapeHtml(s.service)}</div>
-            <div class="prog-service-members">${freres.length > 0 ? freres.map(escapeHtml).join(', ') : '<em>Non assigné</em>'}</div>
-          </div>`;
-        });
-        html += `</div>`;
-      });
-  } else {
-    // Grouper par service
-    const byService = {};
-    entries.forEach(e => {
-      if (!byService[e.service]) byService[e.service] = [];
-      byService[e.service].push(e);
-    });
-
-    Object.entries(byService)
-      .sort(([a], [b]) => a.localeCompare(b))
-      .forEach(([service, dates]) => {
-        html += `<div class="prog-day">
-          <div class="prog-day-label">🔹 ${escapeHtml(service)}</div>`;
-        dates.sort((a, b) => a.date.localeCompare(b.date)).forEach(d => {
-          const dateObj = new Date(d.date + 'T12:00:00');
-          const label = dateObj.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', weekday: 'short' });
-          const freres = Array.isArray(d.freres) ? d.freres : [];
-          html += `<div class="prog-service">
-            <div class="prog-service-name">📅 ${label}</div>
-            <div class="prog-service-members">${freres.length > 0 ? freres.map(escapeHtml).join(', ') : '<em>Non assigné</em>'}</div>
-          </div>`;
-        });
-        html += `</div>`;
-      });
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div class="prog-empty">
+        <div class="big-icon">🔍</div>
+        <p>Aucun résultat pour "<strong>${escapeHtml(document.getElementById('prog-search-nom').value.trim())}</strong>" ce mois-ci.</p>
+      </div>`;
+    return;
   }
 
+  if (vue === 'date') {
+    afficherParDate(filtered, recherche);
+  } else {
+    afficherParService(filtered, recherche);
+  }
+}
+
+/**
+ * Vue PAR DATE : une carte par jour de réunion.
+ */
+function afficherParDate(entries, recherche) {
+  const container = document.getElementById('programme-container');
+  let html = '';
+
+  entries
+    .slice()
+    .sort((a, b) => a.date.localeCompare(b.date))
+    .forEach(entry => {
+      const dateObj   = new Date(entry.date + 'T12:00:00');
+      const dateLabel = dateObj.toLocaleDateString('fr-FR', {
+        weekday: 'long', day: 'numeric', month: 'long',
+      });
+      // Capitaliser
+      const dateCap = dateLabel.charAt(0).toUpperCase() + dateLabel.slice(1);
+
+      if (entry.estAssemblee) {
+        html += `
+          <div class="prog-date-card">
+            <div class="prog-date-header assemblee">🏟️ ${dateCap}</div>
+            <div class="assemblee-row">🌟 Semaine d'assemblée — programme spécial</div>
+          </div>`;
+        return;
+      }
+
+      html += `<div class="prog-date-card">
+        <div class="prog-date-header">📅 ${dateCap}</div>
+        <div class="prog-date-body">`;
+
+      entry.services.forEach(s => {
+        const personnesHtml = s.personnes.map(p => {
+          const isMatch = recherche && normaliser(p).includes(recherche);
+          return `<span class="prog-person${isMatch ? ' highlighted' : ''}">${escapeHtml(p)}</span>`;
+        }).join('');
+
+        html += `
+          <div class="prog-service-row">
+            <span class="prog-service-icon">${s.icon || '🔹'}</span>
+            <span class="prog-service-label">${escapeHtml(s.service)}</span>
+            <div class="prog-people">${personnesHtml || '<em style="font-size:12px;color:#9ca3af;">—</em>'}</div>
+          </div>`;
+      });
+
+      html += `</div></div>`;
+    });
+
   container.innerHTML = html;
+}
+
+/**
+ * Vue PAR SERVICE : une carte par type de service avec les dates.
+ */
+function afficherParService(entries, recherche) {
+  const container = document.getElementById('programme-container');
+
+  // Construire la map service → [{date, personnes}]
+  const serviceMap = {};
+  entries
+    .filter(e => !e.estAssemblee)
+    .forEach(entry => {
+      entry.services.forEach(s => {
+        if (!serviceMap[s.service]) {
+          serviceMap[s.service] = { icon: s.icon, dates: [] };
+        }
+        serviceMap[s.service].dates.push({
+          date:     entry.date,
+          personnes: s.personnes,
+        });
+      });
+    });
+
+  const ordreServices = [
+    'Audio', 'Vidéo',
+    'Perches – Partie 1', 'Perches – Partie 2',
+    'Estrade', 'Tablette',
+    'Accueil – Zoom', 'Accueil – Ouverture', 'Accueil – Auditorium',
+  ];
+
+  const servicesSorted = Object.keys(serviceMap).sort((a, b) => {
+    const ia = ordreServices.indexOf(a);
+    const ib = ordreServices.indexOf(b);
+    if (ia === -1 && ib === -1) return a.localeCompare(b);
+    if (ia === -1) return 1;
+    if (ib === -1) return -1;
+    return ia - ib;
+  });
+
+  let html = '';
+
+  servicesSorted.forEach(service => {
+    const info = serviceMap[service];
+    html += `
+      <div class="prog-by-service-card">
+        <div class="prog-by-service-header">
+          <span>${info.icon || '🔹'}</span>
+          <span>${escapeHtml(service)}</span>
+        </div>`;
+
+    info.dates
+      .slice()
+      .sort((a, b) => a.date.localeCompare(b.date))
+      .forEach(d => {
+        const dateObj = new Date(d.date + 'T12:00:00');
+        const label   = dateObj.toLocaleDateString('fr-FR', {
+          weekday: 'short', day: 'numeric', month: 'short',
+        });
+        const labelCap = label.charAt(0).toUpperCase() + label.slice(1);
+        const personnesHtml = d.personnes.map(p => {
+          const isMatch = recherche && normaliser(p).includes(recherche);
+          return `<span class="prog-person${isMatch ? ' highlighted' : ''}">${escapeHtml(p)}</span>`;
+        }).join(' ');
+
+        html += `
+          <div class="prog-by-service-date">
+            <span class="prog-date-chip">📅 ${labelCap}</span>
+            <div class="prog-people" style="justify-content:flex-end;">${personnesHtml}</div>
+          </div>`;
+      });
+
+    html += `</div>`;
+  });
+
+  container.innerHTML = html || '<div class="prog-empty"><div class="big-icon">📭</div><p>Aucun service à afficher.</p></div>';
 }
 
 /* ═══════════════════════════════════════════════════
