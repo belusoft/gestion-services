@@ -3,7 +3,7 @@
  * Stratégie : Cache-first pour les assets, Network-first pour l'API
  */
 
-const CACHE_VERSION = 'sono-accueil-v2';
+const CACHE_VERSION = 'sono-accueil-v3';
 const STATIC_ASSETS = [
   './',
   './index.html',
