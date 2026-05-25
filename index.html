@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#2563eb">
+    <meta name="description" content="Gestion des services et disponibilités - Fratrie">
+
+    <title>Gestion Services - Fratrie</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%232563eb' width='192' height='192'/><text x='96' y='120' font-size='80' fill='white' text-anchor='middle' font-weight='bold'>S</text></svg>">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --warning: #f59e0b;
+            --neutral-50: #f9fafb;
+            --neutral-100: #f3f4f6;
+            --neutral-200: #e5e7eb;
+            --neutral-300: #d1d5db;
+            --neutral-600: #4b5563;
+            --neutral-700: #374151;
+            --neutral-900: #111827;
+
+            --radius: 0.5rem;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        html {
+            color-scheme: light;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--neutral-50);
+            color: var(--neutral-900);
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* HEADER */
+        .app-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 1rem;
+            box-shadow: var(--shadow-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .app-header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .btn-icon {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: background 0.2s;
+        }
+
+        .btn-icon:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* TABS */
+        .tabs-container {
+            background: white;
+            border-bottom: 1px solid var(--neutral-200);
+            display: flex;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .tab-button {
+            flex: 1;
+            min-width: 150px;
+            padding: 1rem;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--neutral-600);
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .tab-button.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-button:hover:not(.active) {
+            color: var(--neutral-900);
+        }
+
+        /* CONTENT */
+        .app-content {
+            flex: 1;
+            padding: 1rem;
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .tab-panel {
+            display: none;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* FORM ELEMENTS */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            font-size: 0.95rem;
+            color: var(--neutral-700);
+        }
+
+        select, input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--neutral-300);
+            border-radius: var(--radius);
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        /* CALENDAR */
+        .calendar {
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .calendar-header h3 {
+            font-size: 1.1rem;
+        }
+
+        .calendar-nav {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .calendar-nav button {
+            background: var(--neutral-200);
+            border: none;
+            padding: 0.5rem 0.75rem;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .calendar-nav button:hover {
+            background: var(--neutral-300);
+        }
+
+        .weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .weekday {
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: var(--neutral-600);
+            padding: 0.5rem 0;
+        }
+
+        .days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.5rem;
+        }
+
+        .day {
+            aspect-ratio: 1;
+            border: 1px solid var(--neutral-200);
+            border-radius: var(--radius);
+            padding: 0.5rem;
+            text-align: center;
+            font-size: 0.85rem;
+            cursor: pointer;
+            background: white;
+            transition: all 0.2s;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .day:hover:not(.other-month):not(.disabled) {
+            background: var(--neutral-100);
+            border-color: var(--primary);
+        }
+
+        .day.other-month {
+            color: var(--neutral-300);
+            background: var(--neutral-50);
+        }
+
+        .day.disabled {
+            background: var(--neutral-100);
+            cursor: not-allowed;
+            color: var(--neutral-400);
+        }
+
+        .day.selected {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            font-weight: 600;
+        }
+
+        .day.dispo::after {
+            content: '✓';
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            font-size: 0.7rem;
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        .day.indispo::after {
+            content: '✕';
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            font-size: 0.7rem;
+            color: var(--danger);
+            font-weight: bold;
+        }
+
+        .day.participation::after {
+            content: '◉';
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            font-size: 0.6rem;
+            color: var(--warning);
+        }
+
+        /* RADIO BUTTONS */
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            border: 1px solid var(--neutral-300);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .radio-option:hover {
+            border-color: var(--primary);
+            background: var(--neutral-50);
+        }
+
+        .radio-option input[type="radio"] {
+            margin-right: 0.75rem;
+            width: 1.2rem;
+            height: 1.2rem;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .radio-option input[type="radio"]:checked + label {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .radio-option label {
+            margin: 0;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        /* BUTTONS */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: var(--neutral-200);
+            color: var(--neutral-900);
+        }
+
+        .btn-secondary:hover {
+            background: var(--neutral-300);
+        }
+
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        .btn-icon-only {
+            width: auto;
+            padding: 0.5rem;
+            aspect-ratio: 1;
+        }
+
+        /* PROGRAM VIEW */
+        .program-item {
+            background: white;
+            border-left: 4px solid var(--primary);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .program-date {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .program-service {
+            margin-left: 1rem;
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background: var(--neutral-50);
+            border-radius: var(--radius);
+            border-left: 2px solid var(--warning);
+        }
+
+        .program-service-title {
+            font-weight: 500;
+            color: var(--neutral-900);
+            font-size: 0.95rem;
+        }
+
+        .program-service-members {
+            font-size: 0.85rem;
+            color: var(--neutral-600);
+            margin-top: 0.25rem;
+        }
+
+        /* NOTIFICATIONS */
+        .notification {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-md);
+            z-index: 1000;
+            animation: slideUp 0.3s ease-out;
+            max-width: 400px;
+        }
+
+        .notification.success {
+            border-left: 4px solid var(--success);
+        }
+
+        .notification.error {
+            border-left: 4px solid var(--danger);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(1rem);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* LOADING */
+        .spinner {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid var(--neutral-300);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* FOOTER */
+        .app-footer {
+            background: var(--neutral-100);
+            padding: 1rem;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--neutral-600);
+            border-top: 1px solid var(--neutral-200);
+        }
+
+        /* ADMIN SECTION */
+        .admin-section {
+            display: none;
+        }
+
+        .admin-section.visible {
+            display: block;
+        }
+
+        /* RESPONSIVE */
+        @media (min-width: 640px) {
+            .app-content {
+                max-width: 800px;
+                padding: 2rem;
+            }
+
+            .tab-button {
+                min-width: 180px;
+                font-size: 1rem;
+            }
+
+            .day {
+                font-size: 0.9rem;
+            }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2rem 1rem;
+            color: var(--neutral-600);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- HEADER -->
+        <header class="app-header">
+            <h1>📋 Services</h1>
+            <div class="header-actions">
+                <button class="btn-icon" id="btnSync" title="Synchroniser">🔄</button>
+                <button class="btn-icon" id="btnAdmin" title="Admin">⚙️</button>
+            </div>
+        </header>
+
+        <!-- TABS -->
+        <div class="tabs-container">
+            <button class="tab-button active" data-tab="indisponibilites">Indisponibilités</button>
+            <button class="tab-button" data-tab="programme">Programme du mois</button>
+        </div>
+
+        <!-- CONTENT -->
+        <main class="app-content">
+            <!-- TAB 1: INDISPONIBILITÉS -->
+            <div id="indisponibilites" class="tab-panel active">
+                <div class="form-group">
+                    <label for="selectFrere">Sélectionner un frère:</label>
+                    <select id="selectFrere">
+                        <option value="">-- Choisir --</option>
+                    </select>
+                </div>
+
+                <div id="calendarContainer"></div>
+
+                <div class="form-group">
+                    <label>État sélectionné:</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="disponible" name="etat" value="Disponible" checked>
+                            <label for="disponible">✓ Disponible</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="indisponible" name="etat" value="Indisponible">
+                            <label for="indisponible">✕ Indisponible</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="participation" name="etat" value="Participation_Exterieure">
+                            <label for="participation">◉ Participation extérieure</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="commentaire">Commentaire (optionnel):</label>
+                    <input type="text" id="commentaire" placeholder="Ex: RDV médecin...">
+                </div>
+
+                <button class="btn btn-primary" id="btnSauvegarder">
+                    <span id="btnText">💾 Enregistrer</span>
+                </button>
+            </div>
+
+            <!-- TAB 2: PROGRAMME DU MOIS -->
+            <div id="programme" class="tab-panel">
+                <div class="form-group">
+                    <label for="filterVue">Filtrer par:</label>
+                    <select id="filterVue">
+                        <option value="date">Par date</option>
+                        <option value="service">Par service</option>
+                        <option value="frere">Par frère</option>
+                    </select>
+                </div>
+
+                <div id="programmeContainer" class="empty-state">
+                    <div class="empty-state-icon">📅</div>
+                    <p>Chargement du programme...</p>
+                </div>
+
+                <button class="btn btn-secondary" id="btnExportPDF">
+                    📄 Exporter en PDF
+                </button>
+            </div>
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="app-footer">
+            <p>Gestion des Services - Fratrie &copy; 2026 | Dernière sync: <span id="lastSync">--:--</span></p>
+        </footer>
+    </div>
+
+    <!-- SCRIPT -->
+    <script src="app.js"></script>
+</body>
+</html>
