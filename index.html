@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#6366f1">
+  <meta name="description" content="Gestion des indisponibilités et programme mensuel — Sono &amp; Accueil">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Mes Indispos — Sono &amp; Accueil 2026</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box; margin: 0; padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+    html, body {
+      height: 100%;
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #1f2937;
+    }
+    body { min-height: 100vh; padding: 20px; }
+    #app { max-width: 480px; margin: 0 auto; }
+
+    /* ── SCREENS ── */
+    .screen { display: none; }
+    .screen.active { display: block; animation: fadeIn .25s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+    /* ── CARDS ── */
+    .card {
+      background: white;
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: 0 10px 40px rgba(0,0,0,.15);
+      margin-bottom: 20px;
+    }
+
+    /* ── BRAND HEADER ── */
+    .brand-header { text-align: center; margin-bottom: 20px; color: white; }
+    .brand-header .emoji { font-size: 56px; }
+    .brand-header h1 { font-size: 24px; font-weight: 700; }
+    .brand-header p { font-size: 13px; opacity: .9; }
+
+    /* ── TYPOGRAPHY ── */
+    h2 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+    .subtitle { color: #6b7280; line-height: 1.5; margin-bottom: 20px; font-size: 14px; }
+    .text-small { font-size: 13px; color: #6b7280; }
+    .warning { color: #b45309; }
+
+    /* ── BUTTONS ── */
+    .btn {
+      width: 100%; border: none; border-radius: 16px;
+      padding: 16px; font-size: 16px; font-weight: 600;
+      cursor: pointer; margin-top: 12px;
+      transition: opacity .2s, transform .1s;
+      font-family: inherit;
+    }
+    .btn:focus-visible { outline: 3px solid #4f46e5; outline-offset: 2px; }
+    .btn:active { transform: scale(.98); }
+    .btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+    .btn-primary { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; }
+    .btn-success { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+    .btn-secondary { background: #f3f4f6; color: #1f2937; }
+    .btn-danger { background: #ef4444; color: white; }
+    .btn-outline {
+      background: transparent;
+      border: 2px solid rgba(255,255,255,.6);
+      color: white;
+      border-radius: 16px;
+      padding: 14px 16px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 10px;
+      font-family: inherit;
+      transition: background .2s;
+    }
+    .btn-outline:hover { background: rgba(255,255,255,.15); }
+
+    /* ── INPUTS ── */
+    .search-input, input[type="text"] {
+      width: 100%; padding: 14px; border-radius: 14px;
+      border: 2px solid #e5e7eb; margin-bottom: 16px;
+      font-size: 16px; font-family: inherit; transition: border-color .2s;
+    }
+    .search-input:focus-visible, input[type="text"]:focus-visible {
+      outline: none; border-color: #6366f1;
+    }
+
+    /* ── FRÈRES LIST ── */
+    .freres-list {
+      max-height: 50vh; overflow-y: auto;
+      border: 1px solid #e5e7eb; border-radius: 14px; margin-bottom: 16px;
+    }
+    .frere-item {
+      display: block; width: 100%; padding: 14px;
+      border: none; border-bottom: 1px solid #f3f4f6;
+      background: white; text-align: left; font-size: 16px;
+      font-family: inherit; cursor: pointer; color: #1f2937;
+      transition: background .15s;
+    }
+    .frere-item:last-child { border-bottom: none; }
+    .frere-item:hover { background: #f9fafb; }
+    .frere-item.selected { background: #ede9fe; color: #6366f1; font-weight: 600; }
+    .frere-item:focus-visible { outline: 3px solid #6366f1; outline-offset: -3px; }
+
+    /* ── MONTH GRID ── */
+    .months-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 12px; margin-bottom: 16px;
+    }
+    .month-card {
+      background: white; border-radius: 18px; padding: 20px;
+      text-align: center; cursor: pointer;
+      border: 2px solid transparent; font-size: 16px;
+      font-family: inherit; transition: border-color .2s, box-shadow .2s;
+    }
+    .month-card:hover { border-color: #a5b4fc; box-shadow: 0 4px 12px rgba(99,102,241,.15); }
+    .month-card:focus-visible { outline: 3px solid #6366f1; outline-offset: 2px; }
+    .month-card.done { border-color: #10b981; }
+    .month-card .month-emoji { font-size: 32px; display: block; margin-bottom: 4px; }
+    .month-card .month-name { font-weight: 600; font-size: 15px; }
+
+    /* ── DATE ROWS ── */
+    .date-row {
+      background: white; border-radius: 16px;
+      padding: 16px; margin-bottom: 10px;
+    }
+    .date-label { font-weight: 600; margin-bottom: 10px; font-size: 14px; }
+    .toggle-group { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+    .toggle-btn {
+      border: none; border-radius: 12px; padding: 10px 4px;
+      cursor: pointer; font-size: 12px; font-weight: 600;
+      background: #f3f4f6; color: #4b5563;
+      transition: background .15s, color .15s;
+      font-family: inherit;
+    }
+    .toggle-btn:focus-visible { outline: 3px solid #6366f1; outline-offset: 2px; }
+    .toggle-btn.active[data-state="dispo"]    { background: #10b981; color: white; }
+    .toggle-btn.active[data-state="indispo"]  { background: #ef4444; color: white; }
+    .toggle-btn.active[data-state="particip"] { background: #f59e0b; color: white; }
+    .particip-input { margin-top: 10px; }
+    .particip-input input {
+      width: 100%; padding: 10px; border-radius: 10px;
+      border: 2px solid #e5e7eb; font-family: inherit; font-size: 14px;
+    }
+
+    /* ── RECAP ── */
+    .recap-month {
+      background: white; border-radius: 14px; padding: 14px;
+      margin-bottom: 12px; border: 1px solid #e5e7eb;
+    }
+    .recap-month strong { display: block; margin-bottom: 8px; font-size: 15px; }
+    .recap-line { font-size: 13px; color: #4b5563; padding: 2px 0; }
+
+    /* ── PROGRAMME ── */
+    .prog-controls {
+      display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;
+    }
+    .prog-select {
+      flex: 1; min-width: 120px; padding: 10px 12px;
+      border: 2px solid #e5e7eb; border-radius: 12px;
+      font-size: 14px; font-family: inherit; background: white;
+    }
+    .prog-select:focus-visible { outline: 3px solid #6366f1; border-color: #6366f1; }
+    .prog-day {
+      background: white; border-radius: 16px;
+      padding: 16px; margin-bottom: 10px;
+      border-left: 4px solid #6366f1;
+    }
+    .prog-day-label {
+      font-weight: 700; color: #6366f1;
+      margin-bottom: 10px; font-size: 15px;
+    }
+    .prog-service {
+      background: #f9fafb; border-radius: 10px;
+      padding: 10px 12px; margin-bottom: 6px;
+    }
+    .prog-service:last-child { margin-bottom: 0; }
+    .prog-service-name { font-weight: 600; font-size: 14px; }
+    .prog-service-members { font-size: 13px; color: #6b7280; margin-top: 3px; }
+    .prog-empty {
+      text-align: center; padding: 40px 20px;
+      color: #9ca3af; font-size: 14px;
+    }
+    .prog-empty .big-icon { font-size: 48px; margin-bottom: 12px; }
+
+    /* ── MESSAGES ── */
+    .error-msg {
+      background: #fef2f2; color: #991b1b;
+      padding: 12px; border-radius: 12px; margin-top: 12px;
+      font-size: 14px; line-height: 1.5;
+    }
+    .success-screen { text-align: center; padding: 40px 20px; }
+    .big-emoji { font-size: 72px; }
+
+    /* ── NAV BUTTONS ── */
+    .nav-buttons { display: flex; gap: 10px; }
+    .nav-buttons .btn { flex: 1; }
+
+    /* ── LOADER ── */
+    .loader {
+      width: 18px; height: 18px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+      display: inline-block; vertical-align: middle;
+    }
+    .loader-purple {
+      width: 22px; height: 22px;
+      border: 3px solid #e5e7eb;
+      border-top-color: #6366f1;
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+      display: inline-block; vertical-align: middle; margin-right: 8px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── LOADING / ERROR STATES ── */
+    .loading-state {
+      text-align: center; color: #6b7280;
+      padding: 24px 16px; font-size: 15px;
+    }
+    .error-state {
+      text-align: center; color: #991b1b;
+      background: #fef2f2; border-radius: 12px;
+      padding: 16px; font-size: 14px; line-height: 1.6;
+    }
+    .error-state button {
+      background: #6366f1; color: white; border: none;
+      padding: 10px 20px; border-radius: 10px;
+      cursor: pointer; font-size: 14px; margin-top: 10px;
+      font-family: inherit; font-weight: 600;
+    }
+
+    /* ── BADGE ── */
+    .badge {
+      display: inline-block; font-size: 11px; font-weight: 700;
+      padding: 2px 8px; border-radius: 20px;
+      background: #ede9fe; color: #6366f1; margin-left: 6px;
+    }
+    .badge.green { background: #d1fae5; color: #065f46; }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ══════════════════════════════════════════
+       ÉCRAN 0 — ACCUEIL
+  ══════════════════════════════════════════ -->
+  <div class="screen active" id="screen-welcome">
+    <div class="brand-header">
+      <div class="emoji">🎵</div>
+      <h1>Sono &amp; Accueil</h1>
+      <p>Gestion des services — 2026</p>
+    </div>
+    <div class="card">
+      <h2>Bonjour ! 👋</h2>
+      <p class="subtitle">Que souhaites-tu faire aujourd'hui ?</p>
+      <button class="btn btn-primary" id="btn-start">📅 Saisir mes indisponibilités</button>
+      <button class="btn btn-secondary" id="btn-see-programme" style="margin-top:10px;">📋 Voir le programme du mois</button>
+      <button class="btn btn-secondary" id="btn-reset-local" style="margin-top:8px;font-size:13px;padding:10px;">🗑️ Effacer mes données locales</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       ÉCRAN 1 — CHOISIR SON NOM
+  ══════════════════════════════════════════ -->
+  <div class="screen" id="screen-frere">
+    <div class="card">
+      <h2>Qui es-tu ? 🙋</h2>
+      <input type="text" class="search-input" id="search-frere"
+             placeholder="Rechercher mon nom…" autocomplete="off">
+      <div class="freres-list" id="freres-list"
+           role="listbox" aria-label="Liste des frères"></div>
+      <button class="btn btn-primary" id="btn-valider-frere" disabled>Suivant →</button>
+      <button class="btn btn-secondary" id="btn-back-welcome">← Retour</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       ÉCRAN 2 — CHOISIR UN MOIS
+  ══════════════════════════════════════════ -->
+  <div class="screen" id="screen-mois">
+    <div class="card">
+      <h2 id="mois-title">Choisis un mois 📆</h2>
+      <p class="subtitle" id="mois-subtitle">Sélectionne le ou les mois pour lesquels tu veux renseigner tes indispos. Un ✅ indique qu'un mois est déjà rempli.</p>
+      <div class="months-grid" id="months-grid"></div>
+      <div class="nav-buttons">
+        <button class="btn btn-secondary" id="btn-back-frere">← Changer de nom</button>
+        <button class="btn btn-primary" id="btn-goto-recap" disabled>📝 Voir le récap</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       ÉCRAN 3 — SAISIR LES DATES
+  ══════════════════════════════════════════ -->
+  <div class="screen" id="screen-dates">
+    <div class="card">
+      <h2 id="dates-title"></h2>
+      <p class="subtitle">Indique ta disponibilité pour chaque réunion.<br>
+        <span style="color:#10b981">🟢 Dispo</span> &nbsp;
+        <span style="color:#ef4444">🔴 Indispo</span> &nbsp;
+        <span style="color:#f59e0b">🟠 Participation ext.</span>
+      </p>
+      <div id="dates-container"></div>
+      <div id="dates-error" class="error-msg" style="display:none;"></div>
+      <button class="btn btn-success" id="btn-valider-mois">✓ Valider ce mois</button>
+      <button class="btn btn-secondary" id="btn-back-mois">← Retour aux mois</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       ÉCRAN 4 — RÉCAPITULATIF
+  ══════════════════════════════════════════ -->
+  <div class="screen" id="screen-recap">
+    <div class="card">
+      <h2>Récapitulatif 🚀</h2>
+      <p class="subtitle">Vérifie tes indispos avant d'envoyer.</p>
+      <div id="recap-container"></div>
+      <button class="btn btn-success" id="btn-envoyer">
+        <span id="btn-envoyer-label">📨 Envoyer mes dispos</span>
+      </button>
+      <div id="error-send"></div>
+      <button class="btn btn-secondary" id="btn-back-mois-from-recap" style="margin-top:8px;">← Retour aux mois</button>
+      <button class="btn btn-secondary" id="btn-reset-all" style="margin-top:8px;font-size:13px;padding:10px;">🗑️ Tout effacer et recommencer</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       ÉCRAN 5 — SUCCÈS
+  ══════════════════════════════════════════ -->
+  <div class="screen" id="screen-success">
+    <div class="card success-screen">
+      <div class="big-emoji">🎉</div>
+      <h2>Merci frère !</h2>
+      <p class="subtitle">Tes disponibilités ont bien été enregistrées. On compte sur toi ! 🙏</p>
+      <button class="btn btn-primary" id="btn-new-session">✨ Renseigner un autre mois</button>
+      <button class="btn btn-secondary" id="btn-home-from-success" style="margin-top:8px;">🏠 Accueil</button>
+      <button class="btn btn-secondary" id="btn-reset-after-success" style="margin-top:8px;font-size:13px;padding:10px;">🗑️ Effacer mes données</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       ÉCRAN 6 — PROGRAMME DU MOIS
+  ══════════════════════════════════════════ -->
+  <div class="screen" id="screen-programme">
+    <div class="brand-header" style="margin-bottom:10px;">
+      <div style="font-size:36px;">📋</div>
+      <h1 style="font-size:20px;">Programme du mois</h1>
+    </div>
+    <div class="card">
+      <div class="prog-controls">
+        <select class="prog-select" id="prog-mois-select">
+          <!-- rempli dynamiquement -->
+        </select>
+        <select class="prog-select" id="prog-filtre-select" style="max-width:140px;">
+          <option value="date">Par date</option>
+          <option value="service">Par service</option>
+        </select>
+      </div>
+      <div id="programme-container">
+        <div class="prog-empty">
+          <div class="big-icon">📅</div>
+          <p>Chargement du programme…</p>
+        </div>
+      </div>
+      <button class="btn btn-secondary" id="btn-back-from-prog" style="margin-top:16px;">← Retour à l'accueil</button>
+    </div>
+  </div>
+
+</div><!-- /#app -->
+
+<script>
+'use strict';
+
+/* ═══════════════════════════════════════════════════
+   CONFIGURATION
+═══════════════════════════════════════════════════ */
+const GAS_URL = 'https://script.google.com/macros/s/AKfycby-QGAs4SFO132VVDtS5Okj0XZmlhBxjEzyLVki6aSOegziAmqbMvOxmhekwRCQ55xy/exec';
+
+/* Mois de Juin à Décembre 2026 (les réunions mardi+samedi) */
+const MOIS = [
+  { num: 5,  nom: 'Mai',        emoji: '🌸' },
+  { num: 6,  nom: 'Juin',       emoji: '☀️' },
+  { num: 7,  nom: 'Juillet',    emoji: '🌞' },
+  { num: 8,  nom: 'Août',       emoji: '🏖️' },
+  { num: 9,  nom: 'Septembre',  emoji: '🍂' },
+  { num: 10, nom: 'Octobre',    emoji: '🎃' },
+  { num: 11, nom: 'Novembre',   emoji: '🍁' },
+  { num: 12, nom: 'Décembre',   emoji: '🎄' },
+];
+
+const STORAGE_KEY = 'mes-indispos-state-v2';
+
+/* ═══════════════════════════════════════════════════
+   ÉTAT LOCAL (localStorage)
+═══════════════════════════════════════════════════ */
+function loadState() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const p = JSON.parse(saved);
+      return {
+        frere: p.frere || null,
+        moisCourant: p.moisCourant || null,
+        dispos: p.dispos || {},
+        moisRemplis: new Set(p.moisRemplis || []),
+      };
+    }
+  } catch (e) {
+    console.warn('Impossible de restaurer les données locales', e);
+  }
+  return { frere: null, moisCourant: null, dispos: {}, moisRemplis: new Set() };
+}
+
+const state = loadState();
+let FRERES = [];
+
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({
+    frere: state.frere,
+    moisCourant: state.moisCourant,
+    dispos: state.dispos,
+    moisRemplis: Array.from(state.moisRemplis),
+  }));
+}
+
+function clearState() {
+  state.frere = null;
+  state.moisCourant = null;
+  state.dispos = {};
+  state.moisRemplis.clear();
+  localStorage.removeItem(STORAGE_KEY);
+}
+
+/* ═══════════════════════════════════════════════════
+   NAVIGATION ENTRE ÉCRANS
+═══════════════════════════════════════════════════ */
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById(id);
+  el.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ═══════════════════════════════════════════════════
+   UTILITAIRES
+═══════════════════════════════════════════════════ */
+function escapeHtml(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+/**
+ * Retourne les dates mardi (2) et samedi (6) d'un mois donné
+ */
+function getDatesForMonth(monthNum) {
+  const dates = [];
+  const year = 2026;
+  const lastDay = new Date(year, monthNum, 0).getDate();
+  for (let d = 1; d <= lastDay; d++) {
+    const date = new Date(year, monthNum - 1, d);
+    const dow = date.getDay();
+    if (dow === 2 || dow === 6) {
+      dates.push({
+        iso: `${year}-${String(monthNum).padStart(2, '0')}-${String(d).padStart(2, '0')}`,
+        label: date.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }),
+      });
+    }
+  }
+  return dates;
+}
+
+/* ═══════════════════════════════════════════════════
+   ÉCRAN ACCUEIL
+═══════════════════════════════════════════════════ */
+document.getElementById('btn-start').addEventListener('click', () => {
+  show('screen-frere');
+  loadFreres();
+});
+
+document.getElementById('btn-see-programme').addEventListener('click', () => {
+  buildProgrammeMonthSelect();
+  show('screen-programme');
+  loadProgramme();
+});
+
+document.getElementById('btn-reset-local').addEventListener('click', () => {
+  if (confirm('Effacer toutes les données locales ? Cette action est irréversible.')) {
+    clearState();
+    alert('Données effacées.');
+    show('screen-welcome');
+  }
+});
+
+/* ═══════════════════════════════════════════════════
+   ÉCRAN 1 — SÉLECTION DU FRÈRE
+═══════════════════════════════════════════════════ */
+async function loadFreres() {
+  const container = document.getElementById('freres-list');
+  const btnValider = document.getElementById('btn-valider-frere');
+  document.getElementById('search-frere').value = '';
+  btnValider.disabled = true;
+  container.innerHTML = '<div class="loading-state"><span class="loader-purple"></span> Chargement de la liste…</div>';
+
+  try {
+    const res = await fetch(GAS_URL + '?action=getFreres');
+    if (!res.ok) throw new Error('Erreur réseau (' + res.status + ')');
+    const data = await res.json();
+    if (!data.ok || !Array.isArray(data.freres)) {
+      throw new Error(data.error || 'Réponse inattendue du serveur');
+    }
+    FRERES = data.freres;
+    renderFreres();
+  } catch (err) {
+    console.error('loadFreres :', err);
+    container.innerHTML = `
+      <div class="error-state">
+        ❌ Impossible de charger la liste.<br>
+        <small>${escapeHtml(err.message)}</small>
+        <br><button onclick="loadFreres()">🔄 Réessayer</button>
+      </div>`;
+  }
+}
+
+function renderFreres() {
+  const container = document.getElementById('freres-list');
+  container.innerHTML = '';
+  if (FRERES.length === 0) {
+    container.innerHTML = '<div class="loading-state">Aucun frère trouvé.</div>';
+    return;
+  }
+  FRERES.forEach(nom => {
+    const btn = document.createElement('button');
+    btn.className = 'frere-item';
+    btn.textContent = nom;
+    btn.setAttribute('role', 'option');
+    btn.setAttribute('aria-selected', 'false');
+    btn.dataset.nom = nom;
+    btn.addEventListener('click', () => selectFrere(nom, btn));
+    container.appendChild(btn);
+  });
+  // Restaurer la sélection précédente
+  if (state.frere) {
+    const sel = Array.from(container.children).find(b => b.dataset.nom === state.frere);
+    if (sel) selectFrere(state.frere, sel);
+  }
+}
+
+function filterFreres() {
+  const q = document.getElementById('search-frere').value.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  document.querySelectorAll('#freres-list .frere-item').forEach(item => {
+    const name = item.dataset.nom.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+    item.style.display = name.includes(q) ? '' : 'none';
+  });
+}
+
+function selectFrere(nom, el) {
+  document.querySelectorAll('#freres-list .frere-item').forEach(i => {
+    i.classList.remove('selected');
+    i.setAttribute('aria-selected', 'false');
+  });
+  el.classList.add('selected');
+  el.setAttribute('aria-selected', 'true');
+  state.frere = nom;
+  saveState();
+  document.getElementById('btn-valider-frere').disabled = false;
+}
+
+document.getElementById('search-frere').addEventListener('input', filterFreres);
+document.getElementById('btn-valider-frere').addEventListener('click', () => {
+  if (!state.frere) return;
+  renderMonths();
+  show('screen-mois');
+});
+document.getElementById('btn-back-welcome').addEventListener('click', () => show('screen-welcome'));
+
+/* ═══════════════════════════════════════════════════
+   ÉCRAN 2 — SÉLECTION DU MOIS
+═══════════════════════════════════════════════════ */
+function renderMonths() {
+  const grid = document.getElementById('months-grid');
+  grid.innerHTML = '';
+  // Mettre à jour le titre avec le nom du frère
+  document.getElementById('mois-title').textContent = `Bonjour ${state.frere} 👋`;
+  document.getElementById('mois-subtitle').textContent =
+    'Sélectionne un mois pour renseigner tes indispos. Le ✅ indique qu\'un mois est déjà rempli.';
+  document.getElementById('btn-goto-recap').disabled = (state.moisRemplis.size === 0);
+
+  MOIS.forEach(m => {
+    const btn = document.createElement('button');
+    btn.className = 'month-card';
+    if (state.moisRemplis.has(m.num)) btn.classList.add('done');
+    btn.setAttribute('aria-label', `Mois de ${m.nom}`);
+    btn.innerHTML = `
+      <span class="month-emoji">${m.emoji}</span>
+      <span class="month-name">${m.nom}${state.moisRemplis.has(m.num) ? ' ✅' : ''}</span>
+    `;
+    btn.addEventListener('click', () => selectMois(m));
+    grid.appendChild(btn);
+  });
+}
+
+document.getElementById('btn-goto-recap').addEventListener('click', () => {
+  renderRecap();
+  show('screen-recap');
+});
+document.getElementById('btn-back-frere').addEventListener('click', () => {
+  show('screen-frere');
+  loadFreres();
+});
+
+function selectMois(m) {
+  state.moisCourant = m;
+  // Initialiser les dispos à "dispo" pour les dates non encore saisies
+  getDatesForMonth(m.num).forEach(d => {
+    if (!state.dispos[d.iso]) {
+      state.dispos[d.iso] = { etat: 'dispo', nature: '' };
+    }
+  });
+  saveState();
+  renderDates(getDatesForMonth(m.num));
+  show('screen-dates');
+}
+
+/* ═══════════════════════════════════════════════════
+   ÉCRAN 3 — SAISIE DES DATES
+═══════════════════════════════════════════════════ */
+function renderDates(dates) {
+  document.getElementById('dates-title').textContent =
+    `${state.moisCourant.emoji} ${state.moisCourant.nom}`;
+  const container = document.getElementById('dates-container');
+  container.innerHTML = '';
+  document.getElementById('dates-error').style.display = 'none';
+
+  if (dates.length === 0) {
+    container.innerHTML = '<p class="text-small">Aucune réunion ce mois-ci.</p>';
+    return;
+  }
+
+  dates.forEach(d => {
+    const current = state.dispos[d.iso] || { etat: 'dispo', nature: '' };
+    const row = document.createElement('div');
+    row.className = 'date-row';
+
+    const lbl = document.createElement('div');
+    lbl.className = 'date-label';
+    lbl.textContent = d.label;
+    row.appendChild(lbl);
+
+    const tg = document.createElement('div');
+    tg.className = 'toggle-group';
+
+    [
+      { value: 'dispo',    label: '🟢 Dispo'   },
+      { value: 'indispo',  label: '🔴 Indispo'  },
+      { value: 'particip', label: '🟠 Particip.' },
+    ].forEach(s => {
+      const btn = document.createElement('button');
+      btn.className = 'toggle-btn';
+      if (current.etat === s.value) btn.classList.add('active');
+      btn.dataset.state = s.value;
+      btn.dataset.date = d.iso;
+      btn.textContent = s.label;
+      btn.setAttribute('aria-pressed', current.etat === s.value ? 'true' : 'false');
+      btn.addEventListener('click', () => setDateState(d.iso, s.value));
+      tg.appendChild(btn);
+    });
+    row.appendChild(tg);
+
+    // Champ libre pour la nature de participation
+    const pd = document.createElement('div');
+    pd.className = 'particip-input';
+    pd.id = `particip-${d.iso}`;
+    pd.style.display = current.etat === 'particip' ? 'block' : 'none';
+    const inp = document.createElement('input');
+    inp.type = 'text';
+    inp.placeholder = 'Nature de la participation…';
+    inp.value = current.nature || '';
+    inp.addEventListener('input', (e) => {
+      state.dispos[d.iso].nature = e.target.value;
+      saveState();
+    });
+    pd.appendChild(inp);
+    row.appendChild(pd);
+
+    container.appendChild(row);
+  });
+}
+
+function setDateState(iso, etat) {
+  if (!state.dispos[iso]) state.dispos[iso] = { etat: 'dispo', nature: '' };
+  state.dispos[iso].etat = etat;
+  if (etat !== 'particip') state.dispos[iso].nature = '';
+  saveState();
+  renderDates(getDatesForMonth(state.moisCourant.num));
+}
+
+document.getElementById('btn-valider-mois').addEventListener('click', () => {
+  const dates = getDatesForMonth(state.moisCourant.num);
+  const missing = dates.filter(d =>
+    state.dispos[d.iso]?.etat === 'particip' &&
+    !state.dispos[d.iso]?.nature?.trim()
+  );
+  if (missing.length > 0) {
+    const errEl = document.getElementById('dates-error');
+    errEl.textContent = `Merci de préciser la nature de participation pour : ${missing.map(d => d.label).join(', ')}.`;
+    errEl.style.display = 'block';
+    return;
+  }
+  state.moisRemplis.add(state.moisCourant.num);
+  saveState();
+  renderMonths();
+  show('screen-mois');
+});
+
+document.getElementById('btn-back-mois').addEventListener('click', () => {
+  renderMonths();
+  show('screen-mois');
+});
+
+/* ═══════════════════════════════════════════════════
+   ÉCRAN 4 — RÉCAPITULATIF
+═══════════════════════════════════════════════════ */
+function renderRecap() {
+  const container = document.getElementById('recap-container');
+  container.innerHTML = '';
+  if (!state.frere || state.moisRemplis.size === 0) {
+    container.innerHTML = '<p class="text-small">Aucun mois renseigné pour le moment.</p>';
+    return;
+  }
+
+  Array.from(state.moisRemplis).sort((a, b) => a - b).forEach(num => {
+    const m = MOIS.find(m => m.num === num);
+    if (!m) return;
+    const dates = getDatesForMonth(num);
+    const div = document.createElement('div');
+    div.className = 'recap-month';
+
+    let html = `<strong>${escapeHtml(state.frere)} — ${m.emoji} ${m.nom} 2026</strong>`;
+    dates.forEach(d => {
+      const etat = state.dispos[d.iso]?.etat || 'dispo';
+      const nature = state.dispos[d.iso]?.nature || '';
+      const badge = etat === 'dispo' ? '🟢' : etat === 'indispo' ? '🔴' : '🟠';
+      html += `<div class="recap-line">${badge} ${d.label}${nature ? ' — ' + escapeHtml(nature) : ''}</div>`;
+    });
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+}
+
+document.getElementById('btn-back-mois-from-recap').addEventListener('click', () => {
+  renderMonths();
+  show('screen-mois');
+});
+
+document.getElementById('btn-reset-all').addEventListener('click', () => {
+  if (confirm('Effacer toutes les disponibilités et recommencer ?')) {
+    clearState();
+    show('screen-welcome');
+  }
+});
+
+/* ═══════════════════════════════════════════════════
+   ENVOI VERS GOOGLE APPS SCRIPT
+═══════════════════════════════════════════════════ */
+document.getElementById('btn-envoyer').addEventListener('click', envoyer);
+
+async function envoyer() {
+  const btn = document.getElementById('btn-envoyer');
+  const label = document.getElementById('btn-envoyer-label');
+  const errorDiv = document.getElementById('error-send');
+  errorDiv.innerHTML = '';
+  btn.disabled = true;
+
+  const sorted = Array.from(state.moisRemplis).sort((a, b) => a - b);
+  if (sorted.length === 0) {
+    btn.disabled = false;
+    errorDiv.innerHTML = '<div class="error-msg">❌ Aucun mois à envoyer.</div>';
+    return;
+  }
+
+  try {
+    for (let i = 0; i < sorted.length; i++) {
+      const num = sorted[i];
+      const moisInfo = MOIS.find(m => m.num === num);
+      label.innerHTML = `<span class="loader"></span> Envoi ${i + 1}/${sorted.length} (${moisInfo.nom})…`;
+
+      const dates = getDatesForMonth(num);
+      const disposMois = dates.map(d => ({
+        iso: d.iso,
+        label: d.label,
+        etat: state.dispos[d.iso]?.etat || 'dispo',
+        nature: state.dispos[d.iso]?.nature || '',
+      }));
+
+      const payload = {
+        action: 'saveDispos',
+        nom: state.frere,
+        mois: num,
+        moisNom: moisInfo.nom,
+        timestamp: new Date().toISOString(),
+        dispos: disposMois,
+      };
+
+      const res = await fetch(GAS_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+        body: JSON.stringify(payload),
+        redirect: 'follow',
+      });
+
+      if (!res.ok) throw new Error(`${moisInfo.nom} : erreur serveur (${res.status})`);
+
+      let data;
+      try {
+        data = JSON.parse(await res.text());
+      } catch {
+        throw new Error(`${moisInfo.nom} : réponse du serveur incompréhensible`);
+      }
+      if (!data.ok) throw new Error(`${moisInfo.nom} : ${data.error || 'erreur inconnue'}`);
+    }
+    show('screen-success');
+  } catch (err) {
+    console.error(err);
+    btn.disabled = false;
+    label.innerHTML = '📨 Envoyer mes dispos';
+    errorDiv.innerHTML = `<div class="error-msg">❌ ${escapeHtml(err.message)}</div>`;
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   ÉCRAN 5 — SUCCÈS
+═══════════════════════════════════════════════════ */
+document.getElementById('btn-new-session').addEventListener('click', () => {
+  state.moisRemplis.clear();
+  state.dispos = {};
+  saveState();
+  renderMonths();
+  show('screen-mois');
+});
+document.getElementById('btn-home-from-success').addEventListener('click', () => show('screen-welcome'));
+document.getElementById('btn-reset-after-success').addEventListener('click', () => {
+  clearState();
+  show('screen-welcome');
+});
+
+/* ═══════════════════════════════════════════════════
+   ÉCRAN 6 — PROGRAMME DU MOIS
+═══════════════════════════════════════════════════ */
+
+/** Construit la liste de mois dans le select du programme */
+function buildProgrammeMonthSelect() {
+  const sel = document.getElementById('prog-mois-select');
+  sel.innerHTML = '';
+  const now = new Date();
+  MOIS.forEach(m => {
+    const opt = document.createElement('option');
+    opt.value = m.num;
+    opt.textContent = `${m.emoji} ${m.nom} 2026`;
+    if (m.num === now.getMonth() + 1) opt.selected = true;
+    sel.appendChild(opt);
+  });
+}
+
+document.getElementById('prog-mois-select').addEventListener('change', loadProgramme);
+document.getElementById('prog-filtre-select').addEventListener('change', loadProgramme);
+document.getElementById('btn-back-from-prog').addEventListener('click', () => show('screen-welcome'));
+
+async function loadProgramme() {
+  const moisNum = parseInt(document.getElementById('prog-mois-select').value, 10);
+  const filtre = document.getElementById('prog-filtre-select').value;
+  const container = document.getElementById('programme-container');
+
+  container.innerHTML = '<div class="prog-empty"><div class="big-icon">⏳</div><p>Chargement…</p></div>';
+
+  try {
+    const url = `${GAS_URL}?action=getProgramme&mois=${moisNum}&annee=2026`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('Erreur réseau (' + res.status + ')');
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || 'Erreur serveur');
+
+    displayProgramme(data.programme || [], filtre);
+  } catch (err) {
+    console.error('Programme error:', err);
+    container.innerHTML = `
+      <div class="error-state">
+        ❌ Impossible de charger le programme.<br>
+        <small>${escapeHtml(err.message)}</small>
+        <br><button onclick="loadProgramme()">🔄 Réessayer</button>
+      </div>`;
+  }
+}
+
+/**
+ * Affiche le programme
+ * @param {Array} entries - [{date, service, freres:[]}]
+ * @param {string} filtre - 'date' | 'service'
+ */
+function displayProgramme(entries, filtre) {
+  const container = document.getElementById('programme-container');
+
+  if (!entries || entries.length === 0) {
+    container.innerHTML = `
+      <div class="prog-empty">
+        <div class="big-icon">📭</div>
+        <p>Aucun programme disponible pour ce mois.</p>
+      </div>`;
+    return;
+  }
+
+  let html = '';
+
+  if (filtre === 'date') {
+    // Grouper par date
+    const byDate = {};
+    entries.forEach(e => {
+      if (!byDate[e.date]) byDate[e.date] = [];
+      byDate[e.date].push(e);
+    });
+
+    Object.entries(byDate)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .forEach(([date, services]) => {
+        const dateObj = new Date(date + 'T12:00:00');
+        const label = dateObj.toLocaleDateString('fr-FR', {
+          weekday: 'long', day: 'numeric', month: 'long',
+        });
+        html += `<div class="prog-day">
+          <div class="prog-day-label">📅 ${label}</div>`;
+        services.forEach(s => {
+          const freres = Array.isArray(s.freres) ? s.freres : [];
+          html += `<div class="prog-service">
+            <div class="prog-service-name">🔹 ${escapeHtml(s.service)}</div>
+            <div class="prog-service-members">${freres.length > 0 ? freres.map(escapeHtml).join(', ') : '<em>Non assigné</em>'}</div>
+          </div>`;
+        });
+        html += `</div>`;
+      });
+  } else {
+    // Grouper par service
+    const byService = {};
+    entries.forEach(e => {
+      if (!byService[e.service]) byService[e.service] = [];
+      byService[e.service].push(e);
+    });
+
+    Object.entries(byService)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .forEach(([service, dates]) => {
+        html += `<div class="prog-day">
+          <div class="prog-day-label">🔹 ${escapeHtml(service)}</div>`;
+        dates.sort((a, b) => a.date.localeCompare(b.date)).forEach(d => {
+          const dateObj = new Date(d.date + 'T12:00:00');
+          const label = dateObj.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', weekday: 'short' });
+          const freres = Array.isArray(d.freres) ? d.freres : [];
+          html += `<div class="prog-service">
+            <div class="prog-service-name">📅 ${label}</div>
+            <div class="prog-service-members">${freres.length > 0 ? freres.map(escapeHtml).join(', ') : '<em>Non assigné</em>'}</div>
+          </div>`;
+        });
+        html += `</div>`;
+      });
+  }
+
+  container.innerHTML = html;
+}
+
+/* ═══════════════════════════════════════════════════
+   INITIALISATION
+═══════════════════════════════════════════════════ */
+(function init() {
+  // Pré-remplir le select du programme
+  buildProgrammeMonthSelect();
+
+  // Si le frère est déjà connu, aller directement aux mois
+  if (state.frere) {
+    renderMonths();
+    show('screen-mois');
+  } else {
+    show('screen-welcome');
+  }
+
+  // Enregistrer le Service Worker pour le mode PWA
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(err =>
+      console.warn('SW registration failed:', err)
+    );
+  }
+})();
+</script>
+</body>
+</html>
